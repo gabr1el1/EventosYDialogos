@@ -59,10 +59,16 @@ begin
   case AResult of
   mrOk:
   begin
-
     //Si existe solamente abrirlo
     if(FileExists(rutaLoc)) then
     begin
+      {$IFDEF MSWINDOWS OR MACOS}
+      rutaLoc:=TPath.Combine('.\',AValue);
+      {$ENDIF}
+      {$IFDEF ANDROID OR IOS}
+      rutaLoc:=TPath.Combine(TPath.GetTempPath,AValue);
+      {$ENDIF}
+
       frmData.ruta:=rutaLoc;
       frmData.fileNameLbl.Text:=rutaLoc;
       frmData.memLog.Lines.Clear;
@@ -91,10 +97,17 @@ begin
      mrYes:
        begin
         //Crear el archivo y cargarlo
+        {$IFDEF MSWINDOWS OR MACOS}
+        rutaLoc:=TPath.Combine('.\',AValue);
+        {$ENDIF}
+        {$IFDEF ANDROID OR IOS}
+        rutaLoc:=TPath.Combine(TPath.GetTempPath,AValue);
+        {$ENDIF}
+
         frmData.ruta:=rutaLoc;
         frmData.fileNameLbl.Text:=rutaLoc;
-        frmData.memLog.Lines.SaveToFile(rutaLoc);
         frmData.memLog.Lines.Clear;
+        frmData.memLog.Lines.SaveToFile(rutaLoc);
         frmData.memLog.Lines.LoadFromFile(rutaLoc);
 
         {$IFDEF MSWINDOWS OR MACOS}
@@ -107,10 +120,6 @@ begin
      mrNo: ;
      end; // case
      end); // f
-
-
-
-
 
     end;
   end;
