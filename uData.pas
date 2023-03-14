@@ -17,7 +17,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure backBtnClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     function AppEvent(AAppEvent: TApplicationEvent;
@@ -57,7 +57,7 @@ AContext: TObject): Boolean;
 begin
   if AAppEvent = TApplicationEvent.WillTerminate then
   begin
-    memLog.Lines.SaveToFile('.\temp.txt');
+    memLog.Lines.SaveToFile(TPath.Combine(TPath.GetTempPath,'temp.txt'));
   end;
   Result := true;
 end;
@@ -98,10 +98,18 @@ begin
 
 end;
 
-procedure TfrmData.FormDestroy(Sender: TObject);
+procedure TfrmData.FormCreate(Sender: TObject);
+var
+  AppEventSvc: IFMXApplicationEventService;
 begin
-  memLog.Lines.SaveToFile('temporal.txt');
+  if TPlatformServices.Current.SupportsPlatformService
+    (IFMXApplicationEventService, IInterface(AppEventSvc)) then
+  begin
+    AppEventSvc.SetApplicationEventHandler(AppEvent);
+  end;
 end;
+
+
 
 procedure TfrmData.FormShow(Sender: TObject);
 begin

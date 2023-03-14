@@ -24,7 +24,7 @@ type
 
 var
   frmMain: TfrmMain;
-var rutaLoc:String;
+var rutaLoc:String; //Guarda la ruta al preguntar con el InputBox
 
 implementation
 
@@ -41,7 +41,7 @@ end;
 
 procedure TfrmMain.btnOpenClick(Sender: TObject);
 begin
-
+//Pregunta por la ruta del archivo
    InputBox(
  'Abrir el archivo: :' // titulo del dialogo
  , 'Name' // label
@@ -49,6 +49,7 @@ begin
  , // accion a realizar despues de cerrar el dialogo
  procedure(const AResult: TModalResult; const AValue: string)
  begin
+ //Las rutas dependen del SO
     {$IFDEF MSWINDOWS OR MACOS}
     rutaLoc:=TPath.Combine('.\',AValue);
     {$ENDIF}
@@ -59,7 +60,7 @@ begin
   mrOk:
   begin
 
-
+    //Si existe solamente abrirlo
     if(FileExists(rutaLoc)) then
     begin
       frmData.ruta:=rutaLoc;
@@ -75,7 +76,7 @@ begin
       {$ENDIF}
 
     end
-    else
+    else  //Si no existe preguntar si quiere crearlo
     begin
      TDialogService.MessageDialog(
      'No existe el archivo'+rutaLoc+'¿Desea crearlo?' // mensaje del dialogo
@@ -89,7 +90,7 @@ begin
      case AResult of
      mrYes:
        begin
-        
+        //Crear el archivo y cargarlo
         frmData.ruta:=rutaLoc;
         frmData.fileNameLbl.Text:=rutaLoc;
         frmData.memLog.Lines.SaveToFile(rutaLoc);
